@@ -8,6 +8,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import javax.activation.*;
+
 import entities.Chambre;
 import entities.Categorie;
 import entities.Client;
@@ -15,6 +17,11 @@ import entities.Reservation;
 import service.ChambreService;
 import service.ClientService;
 import service.ReservationService;
+
+
+//import jakarta.activation.DataHandler;
+//import jakarta.activation.DataSource;
+
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -168,7 +175,7 @@ public class ReservationUI extends JFrame {
             boolean success = reservationService.create(reservation);
 
             if (success) {
-                sendEmail(clientName, "Reservation Confirmation", "Your reservation is confirmed for room " + selectedChambre.getId());
+                sendEmail("se552733@gmail.com", "Reservation Confirmation", "Your have a reservation  for room " + selectedChambre.getId());
                 JOptionPane.showMessageDialog(this, "Reservation successful! A confirmation email has been sent.", "Success", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "Failed to create reservation.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -181,7 +188,7 @@ public class ReservationUI extends JFrame {
 
     private void sendEmail(String recipientEmail, String subject, String content) throws MessagingException {
         String host = "smtp.gmail.com"; // Replace with your SMTP server
-        String from = "se55233@gmail.com";
+        String from = "se552733@gmail.com";
         String password = "oahv nefa aedx xbov";
 
         // Configure session properties

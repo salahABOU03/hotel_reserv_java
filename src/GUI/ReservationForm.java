@@ -60,7 +60,7 @@ public class ReservationForm extends JInternalFrame {
         for (Reservation reservation : reservations) {
             tableModel.addRow(new Object[]{
                     reservation.getId(),
-                    reservation.getDatedebut(),
+                    reservation.getDatedebut(), 
                     reservation.getDatefin(),
                     reservation.getChambre().getId(),
                     reservation.getClient().getId()
