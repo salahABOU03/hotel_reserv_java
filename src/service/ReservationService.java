@@ -2,6 +2,7 @@ package service;
 
 import connexion.Connexion;
 import dao.IDAO;
+import entities.Client;
 import entities.Reservation;
 
 import java.sql.Date;
@@ -91,17 +92,23 @@ public class ReservationService implements IDAO<Reservation> {
         try (PreparedStatement ps = Connexion.getCnx().prepareStatement(query)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                reservations.add(new Reservation(
-                        rs.getInt("id"),
-                        rs.getDate("datedebut"),
-                        rs.getDate("datefin"),
-                        new ChambreService().findById(rs.getInt("chambre_id")),
-                        new ClientService().findById(rs.getInt("client_id"))
-                ));
+                Client client = new ClientService().findById(rs.getInt("client_id"));
+                if (client != null) {
+                    reservations.add(new Reservation(
+                            rs.getInt("id"),
+                            rs.getDate("datedebut"),
+                            rs.getDate("datefin"),
+                            new ChambreService().findById(rs.getInt("chambre_id")),
+                            client
+                    ));
+                } else {
+                    System.out.println("Reservation with null client skipped: " + rs.getInt("id"));
+                }
             }
         } catch (SQLException e) {
             System.out.println(e);
         }
         return reservations;
     }
+    
 }

@@ -91,28 +91,27 @@ public class ClientService implements IDAO<Client>
     public Client findById(int id) {
         String query = "SELECT * FROM client WHERE id = ?";
         PreparedStatement ps;
-        ResultSet rs ;
+        ResultSet rs;
         try {
             ps = Connexion.getCnx().prepareStatement(query);
             ps.setInt(1, id);
-
+    
             rs = ps.executeQuery();
             if (rs.next()) {
-
-              return new Client(  rs.getString("nom"),
+                return new Client(id, rs.getString("nom"),
                         rs.getString("prenom"),
                         rs.getString("telephone"),
                         rs.getString("email"));
-
-
+            } else {
+                System.out.println("Client with id " + id + " not found");
+                return null; // Vous pouvez retourner un client par défaut si nécessaire
             }
         } catch (SQLException e) {
             System.out.println(e);
         }
-
-
         return null;
     }
+    
 
     @Override
     public List<Client> findAll() {

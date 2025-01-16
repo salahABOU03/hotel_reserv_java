@@ -5,17 +5,20 @@ public class Chambre {
     private int id;
     private String telephone;
     private Categorie categorie;
+    private byte[] image; // L'image stockée sous forme de tableau d'octets (BLOB)
 
-    public Chambre( String telephone, Categorie categorie) {
-        this.id =++count;
+    public Chambre(String telephone, Categorie categorie, byte[] image) {
+        this.id = ++count;
         this.telephone = telephone;
         this.categorie = categorie;
+        this.image = image;
     }
 
-    public Chambre(int id, String telephone, Categorie categorie) {
+    public Chambre(int id, String telephone, Categorie categorie, byte[] image) {
         this.id = id;
         this.telephone = telephone;
         this.categorie = categorie;
+        this.image = image;
     }
 
     public Chambre(int id) {
@@ -46,9 +49,16 @@ public class Chambre {
         this.categorie = categorie;
     }
 
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
     @Override
     public String toString() {
-        return  "Numéro "+id; 
-                      
+        return "Numéro " + id;
     }
 }

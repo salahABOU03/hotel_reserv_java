@@ -4,9 +4,21 @@ import service.CategorieService;
 import service.ChambreService;
 import entities.Categorie;
 import entities.Chambre;
-import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import java.awt.Component;
+import java.awt.Image;
+import javax.swing.ImageIcon;
 
 public class ChambreForm extends javax.swing.JInternalFrame {
 
@@ -45,6 +57,14 @@ public class ChambreForm extends javax.swing.JInternalFrame {
                             break;
                         }
                     }
+
+                    // Afficher l'image de la chambre dans le label
+                    byte[] imageBytes = (byte[]) tableModel.getValueAt(row, 3);
+                    if (imageBytes != null) {
+                        ImageIcon imageIcon = new ImageIcon(imageBytes);
+                        Image image = imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                        jLabelImage.setIcon(new ImageIcon(image));
+                    }
                 }
             }
         });
@@ -70,7 +90,8 @@ public class ChambreForm extends javax.swing.JInternalFrame {
             Object[] row = {
                 chambre.getId(),
                 chambre.getTelephone(),
-                chambre.getCategorie().getLibelle()
+                chambre.getCategorie().getLibelle(),
+                chambre.getImage() // Ajouter l'image en tant que byte[]
             };
             tableModel.addRow(row);
         }
@@ -83,9 +104,12 @@ public class ChambreForm extends javax.swing.JInternalFrame {
             return;
         }
 
+        byte[] image = loadImage(); // Get the image byte array
+
         Chambre chambre = new Chambre(
             jTextField1.getText(), // telephone
-            selectedCategorie     // categorie
+            selectedCategorie,     // categorie
+            image                  // image
         );
 
         if (service.create(chambre)) {
@@ -111,10 +135,13 @@ public class ChambreForm extends javax.swing.JInternalFrame {
         }
 
         int id = (int) tableModel.getValueAt(row, 0);
+        byte[] image = loadImage(); // Get the image byte array
+
         Chambre chambre = new Chambre(
             id,
             jTextField1.getText(), // telephone
-            selectedCategorie     // categorie
+            selectedCategorie,     // categorie
+            image                  // image
         );
 
         if (service.update(chambre)) {
@@ -155,12 +182,34 @@ public class ChambreForm extends javax.swing.JInternalFrame {
     private void clearFields() {
         jTextField1.setText("");
         jComboBox1.setSelectedIndex(-1);
+        jLabelImage.setIcon(null); // Clear the image label
+    }
+
+    // Helper method to load image from file
+    private byte[] loadImage() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "png", "jpeg"));
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            try (InputStream inputStream = fileChooser.getSelectedFile().toURI().toURL().openStream();
+                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = inputStream.read(buffer)) != -1) {
+                    byteArrayOutputStream.write(buffer, 0, length);
+                }
+                return byteArrayOutputStream.toByteArray();
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error loading image!");
+            }
+        }
+        return null; // Return null if no image is selected
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         jPanel1 = new javax.swing.JPanel();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
@@ -169,6 +218,7 @@ public class ChambreForm extends javax.swing.JInternalFrame {
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jLabelImage = new javax.swing.JLabel(); // Label for displaying the image
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -198,6 +248,8 @@ public class ChambreForm extends javax.swing.JInternalFrame {
         jLabel2.setText("Categorie");
         jLabel2.setForeground(new java.awt.Color(0, 0, 0)); // Black text
 
+        jLabelImage.setText(""); // Label to display image
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -220,6 +272,10 @@ public class ChambreForm extends javax.swing.JInternalFrame {
                 .addGap(99, 99, 99)
                 .addComponent(jButton3)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(jLabelImage, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -237,6 +293,8 @@ public class ChambreForm extends javax.swing.JInternalFrame {
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
+                .addGap(30, 30, 30)
+                .addComponent(jLabelImage, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(41, Short.MAX_VALUE))
         );
 
@@ -245,19 +303,36 @@ public class ChambreForm extends javax.swing.JInternalFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "id", "telephone", "categorie"
+                "id", "telephone", "categorie", "image"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
+        jTable1.setRowHeight(100); // Ajustez la hauteur des lignes pour correspondre à la taille des images
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
+        jTable1.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (value instanceof byte[]) {
+            byte[] imageBytes = (byte[]) value;
+            if (imageBytes != null) {
+                ImageIcon icon = new ImageIcon(imageBytes);
+                Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+                JLabel label = new JLabel(new ImageIcon(img));
+                return label;
+            }
+        }
+        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    }
+});
+
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 803, Short.MAX_VALUE)
@@ -275,15 +350,15 @@ public class ChambreForm extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -291,9 +366,7 @@ public class ChambreForm extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-     
-    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -307,5 +380,7 @@ public class ChambreForm extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel jLabelImage; // Ajoutez cette ligne pour le label d'image
+
     // End of variables declaration//GEN-END:variables
 }
