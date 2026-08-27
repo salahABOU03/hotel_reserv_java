@@ -1,18 +1,45 @@
-## Getting Started
+# 🏨 Hotel Reservation API
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+> A Java-based hotel reservation management system with booking engine, room inventory, and customer management.
 
-## Folder Structure
+![Java](https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat-square&logo=spring-boot&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
 
-The workspace contains two folders by default, where:
+---
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## ✨ Features
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+- 🛏️ **Room Management** — Track room types, availability, and pricing
+- 📅 **Booking Engine** — Create, modify, and cancel reservations
+- 👤 **Customer Profiles** — Manage guest information and booking history
+- 💰 **Billing** — Generate invoices and track payments
+- 📡 **REST API** — Clean endpoints for frontend integration
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+## 🚀 Quick Start
 
-## Dependency Management
+```bash
+# Clone
+git clone https://github.com/salahABOU03/hotel-reservation-api.git
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+# Configure database
+# Update src/main/resources/application.properties
+
+# Build & Run
+mvn spring-boot:run
+```
+
+## 🏗️ Architecture
+
+```
+src/main/java/
+├── controller/     # REST endpoints
+├── model/          # JPA entities (Room, Reservation, Customer)
+├── repository/     # Spring Data repositories
+├── service/        # Business logic layer
+└── dto/            # Data transfer objects
+```
+
+## 📄 License
+
+© 2025 Salah Eddine Abouelkemhe
